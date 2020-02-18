@@ -36,7 +36,7 @@ figure(2),hist(sample2)
 
 %% KS tests multiple times
 M=1e4;
-times=1e2;
+times=1e4;
 fail=0;
 for i=1:times
 [samples] = lastname_firstname_hw2_prob1(M);
@@ -49,5 +49,5 @@ end
 end
 fail
 % hist(sample2);
-% figure,hist(sample)
+% figure,hist(samples)
 
