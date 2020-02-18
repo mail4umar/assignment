@@ -1,4 +1,4 @@
-x=0:0.1:10;
+
 lambda=2;
 % g=2*(x./lambda^2).*exp(-(x/lambda).^2);
 % plot(x,g)
@@ -8,6 +8,7 @@ A=2*sqrt(2)*pi*xs*exp(-xs^2/4);
 N=1e4;
 
 X=real(sqrt(-lambda^2*log(-(rand(N,1))))); % Does the A fit here? or can we treat it later?
+X=real(2*sqrt(-log(-(rand(N,1)))));
 % X=A*(sqrt(-lambda^2*log(-rand(N,1)))); % generate exponential samples
 U=rand(N,1).*X;
 p=sqrt(2)*pi*X.^2.*exp(-(X.^2/2));
@@ -35,7 +36,7 @@ figure(2),hist(sample2)
 
 %% KS tests multiple times
 M=1e4;
-times=1e4;
+times=1e2;
 fail=0;
 for i=1:times
 [samples] = lastname_firstname_hw2_prob1(M);
