@@ -36,18 +36,22 @@ figure(2),hist(sample2)
 
 %% KS tests multiple times
 M=1e4;
-times=1e4;
+times=1e2;
+fail=0;
+P=[];
 fail=0;
 for i=1:times
 [samples] = lastname_firstname_hw2_prob1(M);
 sample2=sqrt(randn(M,1).^2+randn(M,1).^2+randn(M,1).^2);
 
-h=kstest2(samples,sample2);
-if h==1
-    fail=fail+1;
-end
+[h,p]=kstest2(samples,sample2);
+P=[P;p];
+
+    fail=fail+h;
 end
 fail
-% hist(sample2);
-% figure,hist(samples)
+hist(sample2);
+figure,hist(samples)
+% hist(P,20);
+% hist(P,5);
 
