@@ -1,7 +1,10 @@
 
 lambda=2;
-% g=2*(x./lambda^2).*exp(-(x/lambda).^2);
-% plot(x,g)
+x=1:0.1:8;
+f=sqrt(2/pi)*x.^2.*exp(-x.^2/2);
+plot(x,f)
+g=2*(x./lambda^2).*exp(-(x/lambda).^2);
+plot(x,g)
 xs=sqrt(2);
 A=2*sqrt(2)*pi*xs*exp(-xs^2/4);
 %%
@@ -36,7 +39,7 @@ figure(2),hist(sample2)
 
 %% KS tests multiple times
 M=1e4;
-times=1e2;
+times=1e3;
 fail=0;
 P=[];
 fail=0;
@@ -50,8 +53,8 @@ P=[P;p];
     fail=fail+h;
 end
 fail
-hist(sample2);
-figure,hist(samples)
+hist(sample2,10);
+figure,hist(samples,10)
 % hist(P,20);
 % hist(P,5);
 

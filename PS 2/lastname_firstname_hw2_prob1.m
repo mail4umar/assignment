@@ -1,6 +1,7 @@
 function [samples] = lastname_firstname_hw2_prob1(M)
-xs=sqrt(2);
-A=2*sqrt(2)*pi*xs*exp(-xs^2/4);
+xs=sqrt(2);lambda=2;
+% A=2*sqrt(2)*pi*xs*exp(-xs^2/4);
+A=sqrt(2/pi)*(xs/2)*lambda^2*exp(-(xs^2/2)+(xs^2/lambda^2));
 %%
 lambda=2; % set parameters
 samples=[];
