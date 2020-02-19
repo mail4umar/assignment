@@ -9,6 +9,7 @@ N=M;
 while length(samples)<M
 % X=real(sqrt(-lambda^2*log(-(rand(N,1))))); % Does the A fit here? or can we treat it later?
 X=(sqrt(-4*log(1-A.*(rand(N,1)))));
+% X=(sqrt(-4*log(1-(rand(N,1)))));
 X=X(~imag(X));
 U=rand(length(X),1).*X;
 p=sqrt(2)*pi*X.^2.*exp(-(X.^2/2));

@@ -1,4 +1,5 @@
 trials=1e4;
+% for alpha=1:7
 alpha=1;
 steps=20;
 polar=zeros(steps,1);
@@ -26,10 +27,45 @@ end
 % hist(D)
 
 %% Binning
-bin=100;
+bins=100;
+delt=steps/bins;
+range_end=0;
+prob=[];
+COV=[];
+for i=1:bins
+   range_start=range_end;
+   range_end=range_start+delt;
+   interim=D(D>=range_start & D<=range_end); 
+   
+   prob(i)=length(interim);
+   COV(i)=std( interim) / sqrt( length( interim ))/prob(i);
+end
 
+%% Plotting
+plot(prob);
 
-% for i=1:steps-1
-%    polar(i+1)=polar(i)+acos(2*rand().^(1/alpha)-1);
-%    azm(i+1)=azm(i)+rand(M,1)*2*pi;
+% hold on
 % end
+
+%% large equation
+clear X Y Z
+N=1e2;
+rmax=20;
+r=1;
+i=1;
+p_check=[];
+for r=0:delt:rmax
+ro=r/rmax;
+L= @(x) 1/tanh(x)-1/x-ro;
+x0=0.5;
+linv = fzero(L,x0);
+p_check(i)=ro*linv/(rmax*sqrt((pi/(2*N^3))*(1-ro^2-2*ro/(linv)))) * exp(-N*ro*linv) * (sinh(linv)/linv)^N;
+i=i+1;
+end
+
+semilogy(p_check)
+hold on
+semilogy(prob)
+
+%% Coefficient of variation
+figure,plot(COV)

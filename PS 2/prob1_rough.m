@@ -39,7 +39,7 @@ figure(2),hist(sample2)
 
 %% KS tests multiple times
 M=1e4;
-times=1e3;
+times=1e2;
 fail=0;
 P=[];
 fail=0;
