@@ -7,6 +7,7 @@ int_a = -1;
 int_b = 1;
 int_1 = (1-int_a).*rand(M,1) + int_a;
 polar=acos(int_1);
+% polar=rand(M,1)*pi;
 
 %%
 % rvals = 2*rand(M,1)-1;

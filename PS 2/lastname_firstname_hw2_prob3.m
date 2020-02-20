@@ -1,6 +1,6 @@
 trials=1e4;
-% for alpha=1:7
-alpha=1;
+for alpha=1:7
+% alpha=1;
 steps=20;
 polar=zeros(steps,1);
 azm=zeros(steps,1);
@@ -44,17 +44,17 @@ end
 %% Plotting
 plot(prob);
 
-% hold on
-% end
+hold on
+end
 
 %% large equation
 clear X Y Z
-N=1e2;
+N=20;
 rmax=20;
 r=1;
 i=1;
 p_check=[];
-for r=0:delt:rmax
+for r=0:0.1:rmax
 ro=r/rmax;
 L= @(x) 1/tanh(x)-1/x-ro;
 x0=0.5;
@@ -64,8 +64,8 @@ i=i+1;
 end
 
 semilogy(p_check)
-hold on
-semilogy(prob)
+% hold on
+% semilogy(prob)
 
 %% Coefficient of variation
-figure,plot(COV)
+% figure,plot(COV)
