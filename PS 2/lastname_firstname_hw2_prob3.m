@@ -3,7 +3,7 @@ steps=20;
 
 % for alpha=1:7
 
-alpha=5;
+alpha=2;
 polar=zeros(trials,1);
 azm=zeros(trials,1);
 %% First step
@@ -54,12 +54,15 @@ plot(prob);
 
 %% large equation
 clear X Y Z
+
+% rmax=20;
 N=20;
-rmax=20;
+rmax=maxx;
 r=1;
 i=1;
 p_check=[];
-for r=0:0.2:rmax
+% for r=0:0.2:rmax
+for r=xbins
 ro=r/rmax;
 L= @(x) 1/tanh(x)-1/x-ro;
 x0=0.5;
@@ -68,9 +71,9 @@ p_check(i)=ro*linv/(rmax*sqrt((pi/(2*N^3))*(1-ro^2-2*ro/(linv)))) * exp(-N*ro*li
 i=i+1;
 end
 
-semilogy(p_check')
+semilogy(xbins,p_check')
 hold on
-semilogy(prob)
+semilogy(xbins,prob)
 
 %% Coefficient of variation
 % COV=sigsave./meansave
