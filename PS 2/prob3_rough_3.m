@@ -1,7 +1,9 @@
 trials=1e4;
-for alpha=1:7
-% alpha=1;
 steps=20;
+
+% for alpha=1:7
+
+alpha=1;
 polar=zeros(steps,1);
 azm=zeros(steps,1);
 %% First step
@@ -11,7 +13,7 @@ polar(1) = acos(2*rand()-1);
 
 %% Next steps
 D=[];
-for i=1:trials
+for i=1:trials %>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>becareful for should be up
 M=steps-1;
 polar(2:end)=acos(2*rand(M,1).^(1/alpha)-1);
 azm(2:end)=rand(M,1)*2*pi;
@@ -44,8 +46,8 @@ end
 %% Plotting
 plot(prob);
 
-hold on
-end
+% hold on
+% end
 
 %% large equation
 clear X Y Z
