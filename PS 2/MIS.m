@@ -1,4 +1,4 @@
-%
+% The format is copied from the uploaded example
 % importance sampling demo, sum of Gaussians
 %
 
@@ -19,7 +19,7 @@ n=20;
 % biasing parameters
 %
 
-bias = 1:6;
+bias = 1:12;
 
 %
 % plotting parameters for different biasings
@@ -213,40 +213,40 @@ drawnow;
 
 hold off;
 
-% f4=figure(4);
-% set(f4,'Position',[0.025*wid 0.025*hyt wid/3 hyt/3]);
-%
-% plot(xbins,binavg,xbins,exp(-xbins.*xbins/(2*sigma2))/sqrt(2*pi*sigma2),'linewidth',2);
-% a=gca;
-% set(a,'linewidth',1.0,'FontSize',14);
-% xlabel('z','FontSize',16);
-% ylabel('weighted and exact probability','FontSize',16);
-%
-% f5=figure(5);
-% set(f5,'Position',[0.35*wid 0.025*hyt wid/3 hyt/3]);
-% plot(xbins,sqrt(misvar)./binavg,'linewidth',2);
-% a=gca;
-% set(a,'linewidth',1.0,'FontSize',14);
-% xlabel('z','FontSize',16);
-% ylabel('coefficient of variation','FontSize',16);
-%
-% f6=figure(6);
-% set(f6,'Position',[0.675*wid 0.025*hyt wid/3 hyt/3]);
-% semilogy(xbins,nums,'linewidth',2);
-% a=gca;
-% set(a,'linewidth',1.0,'FontSize',14);
-% xlabel('z','FontSize',16);
-% ylabel('number of samples per bin','Fontsize',16);
-%
-% figure(1);
-% hold off;
-% figure(2);
-% hold off;
-% figure(3);
-% hold off;
-% figure(4);
-% hold off;
-% figure(5);
-% hold off;
-% figure(6);
-% hold off;
+f4=figure(4);
+set(f4,'Position',[0.025*wid 0.025*hyt wid/3 hyt/3]);
+
+plot(xbins,binavg,xbins,p_check,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('weighted and exact probability','FontSize',16);
+
+f5=figure(5);
+set(f5,'Position',[0.35*wid 0.025*hyt wid/3 hyt/3]);
+plot(xbins,sqrt(misvar)./binavg,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('coefficient of variation','FontSize',16);
+
+f6=figure(6);
+set(f6,'Position',[0.675*wid 0.025*hyt wid/3 hyt/3]);
+semilogy(xbins,nums,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('number of samples per bin','Fontsize',16);
+
+figure(1);
+hold off;
+figure(2);
+hold off;
+figure(3);
+hold off;
+figure(4);
+hold off;
+figure(5);
+hold off;
+figure(6);
+hold off;

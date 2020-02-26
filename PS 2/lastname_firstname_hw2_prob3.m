@@ -1,80 +1,242 @@
-trials=1e5;
-steps=20;
+function [binavg,cov] = lastname_firstname_hw2_prob3()
+% The format is copied from the uploaded example
+%
 
-% for alpha=1:7
+rng('default');
+rng('shuffle');
 
-alpha=2;
-polar=zeros(trials,1);
-azm=zeros(trials,1);
-%% First step
-liklihd=ones(trials,1);
-for i=1:steps
-if i==1
-    distance=ones(trials,1);
-    polar = acos(2*rand(trials,1)-1);
-    ZZZ=1;
-else
-zzz=2*rand(trials,1).^(1/alpha)-1;
-polar=acos(zzz);
-distance=sqrt(distance.^2+1-2*distance.*cos(pi-polar));
-z=cos(polar);
-ZZZ=(((z+1)/2).^(1-alpha))/alpha;
+%
+% number of trials
+%
+trials = 1e4;
+
+%
+% number of steps
+%
+n=20;
+
+%
+% biasing parameters
+%
+
+bias = 1:12;
+
+%
+% plotting parameters for different biasings
+%
+
+plotstr=['bo' 'ro' 'ko' 'go' 'co' 'mo' 'go' 'ro' 'mo' 'bo' 'co' 'ko'];
+linestr=['b-' 'r-' 'k-' 'g-' 'c-' 'm-' 'g-' 'r-' 'm-' 'b-' 'c-' 'k-'];
+
+na=length(bias);
+nbins=100;              % binning parameters
+maxx=20;                % maximum distance from center
+dx=maxx/nbins;
+xbins=(dx/2:dx:maxx-dx/2);
+
+%
+% vectors to save results
+%
+binavg=zeros(1,nbins);
+cdfavg=zeros(1,nbins);
+cdcavg=zeros(1,nbins);
+misvar=zeros(1,nbins);
+nums=zeros(1,nbins);
+
+sz = get(0,'ScreenSize');
+wid=sz(3);
+hyt=sz(4);
+
+sigma2=n;
+
+% start loop here
+
+%
+% loop through biasing parameters
+%
+for ka=1:na
+% for ka=1:1
+    
+    sums=zeros(1,trials);
+    ratios=ones(na,trials);
+    
+    %
+    % now loop through adding the Gaussians
+    %
+    for j=1:n
+        
+        fprintf(1,' bias %4i, pass %4i\n',ka,j)
+        if j==1
+            dis=ones(trials,1);
+            polar = acos(2*rand(trials,1)-1);
+        else
+            zzz=2*rand(trials,1).^(1/bias(ka))-1;
+            polar=acos(zzz);
+            dis=sqrt(dis.^2+1-2*dis.*cos(pi-polar));
+            z=cos(polar);
+        end
+        %
+        %   calculate all likelihood ratios for these samples
+        %
+        for kk=1:na
+            if j==1
+                ratio=1; % to make sure first step is 1
+            else
+                ratio=(((z+1)/2).^(1-bias(kk)))/bias(kk);
+            end
+            ratios(kk,:)=ratios(kk,:).*ratio';
+        end
+        
+        sums=dis';
+        
+    end
+    fprintf(1,'\n');
+    
+    %
+    %   bin the results
+    %
+    
+    %
+    % balance heuristic
+    %
+    
+    weight=1./(sum(1./ratios,1));
+    
+    %
+    % bin the results
+    %
+    
+    bintmp=zeros(1,nbins);
+    binold=zeros(1,nbins);
+    for j=1:nbins
+        
+        %
+        % make an indicator function for every bin
+        %
+        indx=find((j*dx)<sums&sums<=((j+1)*dx));
+        indc=find(sums<=((j+1)*dx));
+        indr=find(sums>((j+1)*dx));
+        if ~isempty(indx)
+            binavg(j)=binavg(j)+sum(weight(indx))/trials;
+            bintmp(j)=sum(weight(indx))/trials;
+            binold(j)=sum(ratios(ka,indx))/trials;          % unweighted
+        end
+        nums(j)=nums(j)+length(weight(indx));
+        
+        estim=sum(weight(indx))/trials;                     % estimated value in bin
+        %
+        % Now set up and compute variance; get contribution from each
+        % biasing distribution
+        %
+        tmpweight=zeros(size(weight));
+        tmpweight(indx)=weight(indx);
+        misvar(j)=misvar(j)+sum((tmpweight-estim*ones(size(tmpweight))).^2)/(trials*(trials-1));
+        
+        %
+        % these lines compute cdf and 1-cdf
+        %
+        cdfavg(j)=cdfavg(j)+sum(weight(indc))/trials;
+        cdcavg(j)=cdcavg(j)+sum(weight(indr))/trials;
+    end
+    %
+    % Long equation to compare
+    %
+    N=20;
+    rmax=maxx;
+    r=1;
+    i=1;
+    p_check=[];
+    % for r=0:0.2:rmax
+    for r=xbins
+        ro=r/rmax;
+        L= @(x) 1/tanh(x)-1/x-ro;
+        x0=0.5;
+        linv = fzero(L,x0);
+        p_check(i)=ro*linv/(rmax*sqrt((pi/(2*N^3))*(1-ro^2-2*ro/(linv)))) * exp(-N*ro*linv) * (sinh(linv)/linv)^N;
+        i=i+1;
+    end
+    %
+    % weighted probabilities
+    %
+    f1=figure(1);
+    set(f1,'Position',[0.025*wid 0.525*hyt wid/3 hyt/3]);
+    semilogy(xbins,bintmp/dx,'linewidth',2.0,'MarkerSize',12);
+    a=gca;
+    set(a,'linewidth',1.0,'FontSize',14);
+    xlabel('z','FontSize',16);
+    ylabel('weighted probabilities');
+    drawnow;
+    hold on;
+    f2=figure(2);
+    set(f2,'Position',[0.35*wid 0.525*hyt wid/3 hyt/3]);
+    semilogy(xbins,p_check,'r-',xbins,binavg/dx,'linewidth',2.0);
+    a=gca;
+    set(a,'linewidth',1.0,'FontSize',14);
+    xlabel('z','FontSize',16);
+    ylabel('weighted probability');
+    f3=figure(3);
+    set(f3,'Position',[0.675*wid 0.525*hyt wid/3 hyt/3]);
+    semilogy(xbins,binold/dx,linestr(2*ka-1:2*ka),xbins,binold/dx,plotstr(2*ka-1:2*ka),'linewidth',2.0,'MarkerSize',12);
+    a=gca;
+    set(a,'linewidth',1.0,'FontSize',14);
+    xlabel('z','FontSize',16);
+    ylabel('unweighted probabilities');
+    hold on;
+    pause(1);
 end
-liklihd=liklihd.*ZZZ;
+
+%
+% plot composite distribution
+%
+binavg=binavg/dx;
+figure(1);
+semilogy(xbins,binavg,xbins,p_check,'r-','linewidth',2);
+
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('weighted and exact probability','FontSize',16);
+drawnow;
+
+hold off;
+
+f4=figure(4);
+set(f4,'Position',[0.025*wid 0.025*hyt wid/3 hyt/3]);
+
+plot(xbins,binavg,xbins,p_check,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('weighted and exact probability','FontSize',16);
+
+f5=figure(5);
+set(f5,'Position',[0.35*wid 0.025*hyt wid/3 hyt/3]);
+cov=sqrt(misvar)./binavg;
+plot(xbins,cov,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('coefficient of variation','FontSize',16);
+
+f6=figure(6);
+set(f6,'Position',[0.675*wid 0.025*hyt wid/3 hyt/3]);
+semilogy(xbins,nums,'linewidth',2);
+a=gca;
+set(a,'linewidth',1.0,'FontSize',14);
+xlabel('z','FontSize',16);
+ylabel('number of samples per bin','Fontsize',16);
+
+figure(1);
+hold off;
+figure(2);
+hold off;
+figure(3);
+hold off;
+figure(4);
+hold off;
+figure(5);
+hold off;
+figure(6);
+hold off;
+binavg=binavg/sum(binavg);
 end
-D=distance;
-% hist(D)
-
-%% Binning
-bins=100;
-delt=steps/bins;
-range_end=0;
-prob=zeros(bins,1);
-meansave=zeros(bins,1);
-sigsave=zeros(bins,1);
-COV=[];
-for i=1:bins
-   range_start=range_end;
-   range_end=range_start+delt;
-   interim=1*(D>=range_start & D<=range_end); 
-   p=interim.*liklihd;
-   prob(i)=sum(p);
-   m=mean(p);                  % find the sample mean
-   s=sqrt(var(p));             % and the standard deviation
-   meansave(i)=m;              % save them
-   sigsave(i)=s; 
-end
-
-%% Plotting
-prob=prob./(trials*delt);
-plot(prob);
-
-% hold on
-% end
-
-%% large equation
-clear X Y Z
-
-% rmax=20;
-N=20;
-rmax=maxx;
-r=1;
-i=1;
-p_check=[];
-% for r=0:0.2:rmax
-for r=xbins
-ro=r/rmax;
-L= @(x) 1/tanh(x)-1/x-ro;
-x0=0.5;
-linv = fzero(L,x0);
-p_check(i)=ro*linv/(rmax*sqrt((pi/(2*N^3))*(1-ro^2-2*ro/(linv)))) * exp(-N*ro*linv) * (sinh(linv)/linv)^N;
-i=i+1;
-end
-
-semilogy(xbins,p_check')
-hold on
-semilogy(xbins,prob)
-
-%% Coefficient of variation
-% COV=sigsave./meansave
-% figure,plot(COV)

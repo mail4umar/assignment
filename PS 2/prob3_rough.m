@@ -1,5 +1,5 @@
 r=1;
-M=1e3;
+M=1e4;
 azm=rand(M,1)*2*pi;
 
 %% cos doesnt work :(
@@ -22,12 +22,21 @@ Z=cos(polar);
 X=sin(polar).*cos(azm);
 Y=sin(polar).*sin(azm);
 Z=cos(polar);
-
+ind=ones(size(X));
 scatter3(X,Y,Z);
+al=[X Y Z];
+q1=al((X>0 & Y>0 & Z>0),:);
+q2=al((X>0 & Y>0 & Z<0),:);
+q3=al((X>0 & Y<0 & Z>0),:);
+q4=al((X>0 & Y<0 & Z<0),:);
+q5=al((X<0 & Y>0 & Z>0),:);
+q6=al((X<0 & Y>0 & Z<0),:);
+q7=al((X<0 & Y<0 & Z>0),:);
+q8=al((X<0 & Y<0 & Z<0),:);
 % surf(X,Y,Z);
-alpha=1;
-polar=acos(2*rand(M,1).^(1/alpha)-1);
-azm=rand(M,1)*2*pi;
+% alpha=1;
+% polar=acos(2*rand(M,1).^(1/alpha)-1);
+% azm=rand(M,1)*2*pi;
 % theta=linspace(0,w*pi);
 % phi=linspace(-pi/2,pi/2);
 % [theta,phi]=meshgrid(theta,phi);
