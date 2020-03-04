@@ -23,7 +23,6 @@ P(P==0)=1e-14;
 fileID = fopen('encoded.txt','r');
 formatSpec = '%c';
 A = fscanf(fileID,formatSpec);
-D = unique(A);
 
 % LIKELIHOOD CALCULATION
 f=C(randperm(length(C)));
@@ -40,7 +39,7 @@ L1=liklihood;
 
 acceptance=0;
 consecutive_reject=0;
-for i=1:1e5
+for i=1:1e6
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
@@ -52,8 +51,8 @@ for x=1:length(A)-1
     y=x+1;
     X=A(x);
     Y=A(y);
-    x_ind=find(f==X);
-    y_ind=find(f==Y);
+    x_ind=find(fnew==X);
+    y_ind=find(fnew==Y);
     liklihood=log(liklihood*P(x_ind,y_ind));
 end
 L2=liklihood;
@@ -68,7 +67,7 @@ if z<acc                        % if accept proposed flip
 else
     consecutive_reject=consecutive_reject+1;
 end
-if consecutive_reject>1e3
+if consecutive_reject>5e3
     break
 end
 end
@@ -76,6 +75,6 @@ end
 % INITIAL DECODING
 for x=1:length(A)-1
     X=A(x);
-    x_ind=fnew(D==X);
+    x_ind=find(fnew==X);
     A(x)=C(x_ind);
 end
