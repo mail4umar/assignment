@@ -39,7 +39,7 @@ L1=liklihood;
 
 acceptance=0;
 consecutive_reject=0;
-for i=1:1e6
+for i=1:1e5
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
@@ -57,7 +57,7 @@ for x=1:length(A)-1
 end
 L2=liklihood;
 
-acc=min(L2/L1,1);          % acceptance probability
+acc=min(exp(L2)/exp(L1),1);          % acceptance probability
 z=rand;                         % get uniform RV
 if z<acc                        % if accept proposed flip
     f=fnew;
@@ -67,7 +67,7 @@ if z<acc                        % if accept proposed flip
 else
     consecutive_reject=consecutive_reject+1;
 end
-if consecutive_reject>5e3
+if consecutive_reject>1e3
     break
 end
 end
