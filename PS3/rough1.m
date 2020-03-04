@@ -1,6 +1,7 @@
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 clc
 clear all
+iter=1e5;
 fileID = fopen('war.txt','r');
 formatSpec = '%c';
 A = fscanf(fileID,formatSpec);
@@ -39,7 +40,8 @@ L1=liklihood;
 
 acceptance=0;
 consecutive_reject=0;
-for i=1:1e5
+store_a=[];
+for i=1:iter
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
@@ -59,6 +61,8 @@ L2=liklihood;
 
 acc=min(exp(L2)/exp(L1),1);          % acceptance probability
 z=rand;                         % get uniform RV
+store_a(i)=acc;
+
 if z<acc                        % if accept proposed flip
     f=fnew;
     L1=L2;
