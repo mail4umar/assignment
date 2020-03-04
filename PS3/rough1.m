@@ -25,15 +25,6 @@ formatSpec = '%c';
 A = fscanf(fileID,formatSpec);
 D = unique(A);
 
-% INITIAL DECODING
-% rand_permutation=C(randperm(length(C)));
-% newD=rand_permutation(1:length(D));
-% for x=1:length(A)-1
-%     X=A(x);
-%     x_ind=find(D==X);
-%     A(x)=newD(x_ind);
-% end
-
 % LIKELIHOOD CALCULATION
 f=C(randperm(length(C)));
 liklihood=1;
@@ -48,7 +39,8 @@ end
 L1=liklihood;
 
 acceptance=0;
-for i=1:1e3
+consecutive_reject=0;
+for i=1:1e5
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
@@ -69,7 +61,21 @@ L2=liklihood;
 acc=min(L2/L1,1);          % acceptance probability
 z=rand;                         % get uniform RV
 if z<acc                        % if accept proposed flip
-    f=fnew;    % flip spin
+    f=fnew;
+    L1=L2;
     acceptance=acceptance+1;
+    consecutive_reject=0;
+else
+    consecutive_reject=consecutive_reject+1;
 end
+if consecutive_reject>1e3
+    break
+end
+end
+
+% INITIAL DECODING
+for x=1:length(A)-1
+    X=A(x);
+    x_ind=fnew(D==X);
+    A(x)=C(x_ind);
 end
