@@ -1,9 +1,9 @@
 %% INTIAliZATION
 clc
 clear all
-iter=1e5;
+iter=1e6;
 decode=true;
-
+rejec_limit=1e5;
 
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 fileID = fopen('war.txt','r');
@@ -33,13 +33,13 @@ A = fscanf(fileID,formatSpec);
 f=C(randperm(length(C)));
 X=A(1:end-1);
 Y=A(2:end);
-[~,x_ind]=ismember(X,C);
-[~,y_ind]=ismember(Y,C);
+[~,x_ind]=ismember(X,f);
+[~,y_ind]=ismember(Y,f);
 sz = size(P);
 ind = sub2ind(sz,x_ind,y_ind);
 liklihood=sum(log(P(ind)));
 L1=liklihood;
-clear X Y x_ind y_ind
+clear X Y x_ind y_ind ind
 
 %%
 acceptance=0;
@@ -65,7 +65,7 @@ L2=liklihood;
 l2s(i)=L2;
 l1s(i)=L1;
 
-acc=min(exp(L2)/exp(L1),1);          % acceptance probability
+acc=min(exp(L2-L1),1);          % acceptance probability
 accs(i)=acc;
 z=rand;                         % get uniform RV
 if z<acc                        % check acceptance
@@ -76,7 +76,7 @@ if z<acc                        % check acceptance
 else
     consecutive_reject=consecutive_reject+1;
 end
-if consecutive_reject>1e3
+if consecutive_reject>rejec_limit
     break
 end
 end
@@ -85,7 +85,7 @@ end
 if decode==true
 for x=1:length(A)-1
     X=A(x);
-    x_ind=find(fnew==X);
+    x_ind=find(f==X);
     A(x)=C(x_ind);
 end
 end
