@@ -28,24 +28,14 @@ A = fscanf(fileID,formatSpec);
 f=C(randperm(length(C)));
 X=A(1:end-1);
 Y=A(2:end);
-[~,x_ind]=ismember(X,f);
-[~,y_ind]=ismember(Y,f);
+[~,x_ind]=ismember(X,C);
+[~,y_ind]=ismember(Y,C);
 sz = size(P);
 ind = sub2ind(sz,x_ind,y_ind);
-liklihood=prod(log(P(ind)));
-L=liklihood
+liklihood=sum(log(P(ind)));
+L1=liklihood;
 clear X Y x_ind y_ind
 
-liklihood=1;
-for x=1:length(A)-1
-    y=x+1;
-    X=A(x);
-    Y=A(y);
-    x_ind=find(f==X);
-    y_ind=find(f==Y);
-    liklihood=(liklihood*log(P(x_ind,y_ind)));
-end
-L1=liklihood
 %%
 acceptance=0;
 consecutive_reject=0;
@@ -56,15 +46,13 @@ two_chars = randperm(length(f),2);
 fnew([two_chars(1) two_chars(2)])=fnew([two_chars(2) two_chars(1)]);
 
 % LIKLIHOOD CALCULATION
-liklihood=1;
-for x=1:length(A)-1
-    y=x+1;
-    X=A(x);
-    Y=A(y);
-    x_ind=find(fnew==X);
-    y_ind=find(fnew==Y);
-    liklihood=log(liklihood*P(x_ind,y_ind));
-end
+X=A(1:end-1);
+Y=A(2:end);
+[~,x_ind]=ismember(X,fnew);
+[~,y_ind]=ismember(Y,fnew);
+sz = size(P);
+ind = sub2ind(sz,x_ind,y_ind);
+liklihood=sum(log(P(ind)));
 L2=liklihood;
 
 acc=min(exp(L2)/exp(L1),1);          % acceptance probability

@@ -1,6 +1,5 @@
 % X=A(1:25);
 % Y=A(2:26);
-digits(40)
 
 X=A(1:end-1);
 Y=A(2:end);
@@ -8,23 +7,23 @@ Y=A(2:end);
 [~,y_ind]=ismember(Y,C);
 sz = size(P);
 ind = sub2ind(sz,x_ind,y_ind);
-liklihood=sum(log(P(ind)))
+liklihood=prod(P(ind));
+L_matrix=liklihood
 % prod(log(P(ind)))
 % log(prod(P(ind)))
 % exp(log(prod(P(ind))))
 
 
-liklihood=0;
-ls=[];
+liklihood=1;
 for x=1:length(A)-1
     y=x+1;
     X=A(x);
     Y=A(y);
     x_ind=find(C==X);
     y_ind=find(C==Y);
-    liklihood=liklihood+log((P(x_ind,y_ind)));
+    liklihood=(liklihood*log(P(x_ind,y_ind)));
 end
-L_loop=(liklihood)
+L_loop=liklihood
 
 
 
