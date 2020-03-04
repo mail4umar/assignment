@@ -1,6 +1,8 @@
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 clc
 clear all
+ier=1e5;
+decode=true;
 fileID = fopen('war.txt','r');
 formatSpec = '%c';
 A = fscanf(fileID,formatSpec);
@@ -39,7 +41,7 @@ clear X Y x_ind y_ind
 %%
 acceptance=0;
 consecutive_reject=0;
-for i=1:1e5
+for i=1:iter
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
@@ -71,8 +73,10 @@ end
 end
 
 % INITIAL DECODING
+if decode==true
 for x=1:length(A)-1
     X=A(x);
     x_ind=find(fnew==X);
     A(x)=C(x_ind);
+end
 end
