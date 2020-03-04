@@ -1,7 +1,7 @@
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 clc
 clear all
-ier=1e5;
+iter=1;
 decode=true;
 fileID = fopen('war.txt','r');
 formatSpec = '%c';
@@ -57,9 +57,9 @@ ind = sub2ind(sz,x_ind,y_ind);
 liklihood=sum(log(P(ind)));
 L2=liklihood;
 
-acc=min(exp(L2)/exp(L1),1);          % acceptance probability
+acc=min(L1/L2,1);          % acceptance probability
 z=rand;                         % get uniform RV
-if z<acc                        % if accept proposed flip
+if z<acc                        % check acceptance
     f=fnew;
     L1=L2;
     acceptance=acceptance+1;
