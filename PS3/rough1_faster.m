@@ -1,8 +1,11 @@
-%% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
+%% INTIAliZATION
 clc
 clear all
-iter=1;
+iter=1e5;
 decode=true;
+
+
+%% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 fileID = fopen('war.txt','r');
 formatSpec = '%c';
 A = fscanf(fileID,formatSpec);
@@ -41,6 +44,9 @@ clear X Y x_ind y_ind
 %%
 acceptance=0;
 consecutive_reject=0;
+l1s=[];
+l2s=[];
+accs=[];
 for i=1:iter
 % FLIP TWO CHARACTERS
 fnew=f;
@@ -56,8 +62,11 @@ sz = size(P);
 ind = sub2ind(sz,x_ind,y_ind);
 liklihood=sum(log(P(ind)));
 L2=liklihood;
+l2s(i)=L2;
+l1s(i)=L1;
 
-acc=min(L1/L2,1);          % acceptance probability
+acc=min(exp(L2)/exp(L1),1);          % acceptance probability
+accs(i)=acc;
 z=rand;                         % get uniform RV
 if z<acc                        % check acceptance
     f=fnew;
