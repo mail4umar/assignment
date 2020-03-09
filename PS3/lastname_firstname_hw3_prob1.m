@@ -1,20 +1,19 @@
+
+function [decoded,numits,consecutive_reject]=lastname_firstname_hw3_prob1(encoded,reference)
+
 %% INTIAliZATION
-clc
-clear all
-iter=5e5;
+max_iter=3e6;
 decode=true;
-rejec_limit=1e3;
+rejec_limit=3e2;
 
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
-fileID = fopen('war.txt','r');
-formatSpec = '%c';
-A = fscanf(fileID,formatSpec);
-C = unique(A);
+
+C = unique(reference);
 transition_sum=zeros(length(C),length(C));
-for x=1:length(A)-1
+for x=1:length(reference)-1
     y=x+1;
-    X=A(x);
-    Y=A(y);
+    X=reference(x);
+    Y=reference(y);
     x_ind=find(C==X);
     y_ind=find(C==Y);
     transition_sum(x_ind,y_ind)=transition_sum(x_ind,y_ind)+1; % add one to the histogram
@@ -25,14 +24,12 @@ P=transition_sum./dens;
 P(P==0)=1e-14;
 
 %%
-fileID = fopen('encoded.txt','r');
-formatSpec = '%c';
-A = fscanf(fileID,formatSpec);
+
 
 % LIKELIHOOD CALCULATION
 f=C(randperm(length(C)));
-X=A(1:end-1);
-Y=A(2:end);
+X=encoded(1:end-1);
+Y=encoded(2:end);
 [~,x_ind]=ismember(X,f);
 [~,y_ind]=ismember(Y,f);
 sz = size(P);
@@ -47,15 +44,15 @@ consecutive_reject=0;
 l1s=[];
 l2s=[];
 accs=[];
-for i=1:iter
+for i=1:max_iter
 % FLIP TWO CHARACTERS
 fnew=f;
 two_chars = randperm(length(f),2);
 fnew([two_chars(1) two_chars(2)])=fnew([two_chars(2) two_chars(1)]);
 
 % LIKLIHOOD CALCULATION
-X=A(1:end-1);
-Y=A(2:end);
+X=encoded(1:end-1);
+Y=encoded(2:end);
 [~,x_ind]=ismember(X,fnew);
 [~,y_ind]=ismember(Y,fnew);
 sz = size(P);
@@ -83,9 +80,12 @@ end
 
 % INITIAL DECODING
 if decode==true
-for x=1:length(A)-1
-    X=A(x);
+for x=1:length(encoded)-1
+    X=encoded(x);
     x_ind=find(f==X);
-    A(x)=C(x_ind);
+    encoded(x)=C(x_ind);
 end
+end
+decoded=encoded;
+numits=i;
 end
