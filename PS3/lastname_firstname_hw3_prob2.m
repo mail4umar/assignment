@@ -1,12 +1,7 @@
-%% Initialization
-clc
-clear all
-k=120;
-lambda=10;
-mu=0.05;
-alpha=5; %0.1
-beta=0.5;
-num_ensemble=100;
+function [probs]=lastname_firstname_hw3_prob2(alpha,beta,lambda,mu,num_ensemble,t_final)
+k=170;
+
+% T=2e2;
 T=2e2;
 t=0;
 nk=zeros((2*k),1);
@@ -45,7 +40,7 @@ ts=[];
 nks=[];
 taus=[];
 RNA=[];
-while t<10*5*T
+while t<t_final
 %% Time to transition
 U1=rand(1);
 tau=-log(U1)./(sum(-nk.*Ckk));
@@ -80,7 +75,7 @@ NK=sum(NK)';
 if num_ensemble<2
 RNA(i)=find(NK==1)-1;
 end
-if t>5T
+if t>5*T % To only include values greater than 5T
 nks(:,i)=NK;
 taus(i)=tau;
 end
@@ -89,45 +84,4 @@ end
 tauss=repmat(taus,k,1);
 probs=nks.*tauss;
 probs=sum(probs,2)./sum(sum(probs));
-% tot=sum(A(1,:))+sum(A(2,:))
-% norm_factors=sum(probs,2);
-% norm_factors=repmat(norm_factors,[1,length(nks)]);
-% probs=probs./norm_factors;
-
-%% Comparison
-binvals=[0:length(probs)-1]';
-dist_params = fitdist(binvals, 'Poisson', 'frequency',floor(1e6*probs+0.5));
-poisson_vals = pdf('Poisson',binvals,dist_params.Params(1));
-
-%% Second compariosn
-% binvals=[0:length(probs)-1]';
-% dist_params = fitdist(binvals, 'NegativeBinomial', 'frequency',floor(1e6*probs+0.5));
-% nbin_vals = pdf('NegativeBinomial',binvals,dist_params.Params(1), dist_params.Params(2));
-
-
-%% Calculating C matrix for ON state - PREVIOUS - NOT GOOD
-% C1=zeros(k,k);
-% is=2:k;                 % REMEMBER 1 means 0!! 
-% js=1:(k-1);
-% ind = sub2ind(size(C1),js,is);
-% C1(ind)=lambda;
-% ind = sub2ind(size(C1),is,js);
-% C1(ind)=js*mu;
-% rowsum=sum(C1,2);
-% is=1:k;js=1:k;
-% ind = sub2ind(size(C1),is,js);
-% C1(ind)=-rowsum;
-% %% Calculating C matrix for OFF state
-% C2=zeros(k,k);
-% is=2:k;    
-% js=1:(k-1);
-% ind = sub2ind(size(C2),is,js);
-% C2(ind)=js*mu;
-% rowsum=sum(C2,2);
-% is=1:k;js=1:k;
-% ind = sub2ind(size(C2),is,js);
-% C2(ind)=-rowsum;
-% clear rowsum is js 
-% %% Combining matrix - 1 is on 2 is off
-% C(:,:,1)=C1;
-% C(:,:,2)=C2;
+end

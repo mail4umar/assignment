@@ -1,13 +1,13 @@
 %% Initialization
 clc
 clear all
-k=120;
+k=170;
 lambda=10;
 mu=0.05;
-alpha=50; %0.1
+alpha=0.1; %0.1
 beta=0.5;
 num_ensemble=100;
-T=1e3;
+T=2e2;
 t=0;
 nk=zeros((2*k),1);
 nk(2)=num_ensemble; % this is off state of 0. states are in the following sequence: 0 0' 1 1'...
@@ -45,7 +45,7 @@ ts=[];
 nks=[];
 taus=[];
 RNA=[];
-while t<5*T
+while t<10*5*T
 %% Time to transition
 U1=rand(1);
 tau=-log(U1)./(sum(-nk.*Ckk));
@@ -80,8 +80,10 @@ NK=sum(NK)';
 if num_ensemble<2
 RNA(i)=find(NK==1)-1;
 end
+if t>5*T % To only include values greater than 5T
 nks(:,i)=NK;
 taus(i)=tau;
+end
 end
 %% Calculate probabilities
 tauss=repmat(taus,k,1);
