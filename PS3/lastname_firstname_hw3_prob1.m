@@ -1,10 +1,10 @@
 
-function [decoded,numits,consecutive_reject]=lastname_firstname_hw3_prob1(encoded,reference)
+function [decoded,numits]=lastname_firstname_hw3_prob1(encoded,reference)
 
 %% INTIAliZATION
-max_iter=3e6;
+max_iter=1e6; %5e6
 decode=true;
-rejec_limit=3e2;
+rejec_limit=1.2e2; %2e2
 
 %% CALCULATE REFERENCE TRANSITION PROBABILITY MATRIX
 
