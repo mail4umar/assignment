@@ -6,8 +6,8 @@ lambda=10;
 mu=0.05;
 alpha=0.1; %0.1
 beta=0.5;
-num_ensemble=1;
-T=40;
+num_ensemble=100;
+T=5;
 t=0;
 nk=zeros((2*k),1);
 nk(2)=num_ensemble; % this is off state of 0. states are in the following sequence: 0 0' 1 1'...
@@ -44,8 +44,7 @@ i=0;
 ts=[];
 nks=[];
 taus=[];
-RNAs=[];
-RNA=0;
+RNA=[];
 while t<5*T
 %% Time to transition
 U1=rand(1);
@@ -55,10 +54,17 @@ tau=-log(U1)./(sum(-nk.*Ckk));
 %% Which state will transition
 i=i+1;
 U2=rand(1);
+% condition=1/(sum(-nk.*Ckk))*nk.*-Ckk;
+% chosen_state=find(gt(condition,U2)==1);
+% chosen_state=chosen_state(1); 
 normedrates=nk.*-Ckk/(sum(-nk.*Ckk));
-chosen_state=min(find(cumsum(normedrates)>=U2)); % This can sometimes be empty
+chosen_state=min(find(cumsum(normedrates)>=U2));
+% This can sometimes be empty
 %% Target State
 U3=rand(1);
+% condition=sum((sum(C - diag(diag(C)),2))).*sum(C - diag(diag(C)),2)
+% condition=1/(sum(C(chosen_state,:),2)-Ckk(chosen_state));
+
 rates = C(chosen_state,:);
 rates(chosen_state)=0;
 normedrates=rates/sum(rates);
@@ -68,14 +74,14 @@ nk(chosen_state)=nk(chosen_state)-1;
 nk(target_state)=nk(target_state)+1;
 t=t+tau;
 ts(i)=t;
-taus(i)=tau;
 NK=nk;
 NK=reshape(NK,[2,length(nk)/2]);
 NK=sum(NK)';
-if num_ensemble<2 
-RNAs(i)=find(NK==1)-1;
+if num_ensemble<2
+RNA(i)=find(NK==1)-1;
 end
 nks(:,i)=NK;
+taus(i)=tau;
 end
 %% Calculate probabilities
 tauss=repmat(taus,k,1);
