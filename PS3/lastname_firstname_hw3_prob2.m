@@ -2,7 +2,7 @@ function [probs]=lastname_firstname_hw3_prob2(alpha,beta,lambda,mu,num_ensemble,
 k=170;
 
 % T=2e2;
-T=2e2;
+T=0.2e2;
 t=0;
 nk=zeros((2*k),1);
 nk(2)=num_ensemble; % this is off state of 0. states are in the following sequence: 0 0' 1 1'...
